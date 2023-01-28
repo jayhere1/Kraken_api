@@ -1,6 +1,4 @@
-import asyncio
-import json
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import aiohttp
 import pytest
@@ -63,31 +61,3 @@ async def test_post_site_outages_typeerror():
     with pytest.raises(TypeError):
         site_id = "ABC"
         await post_site_outages(site_id)
-
-
-# @patch("aiohttp.ClientSession.post")
-# async def test_post_site_outages_mock(mock: CoroutineMock, aiohttp_client: TestClient) -> None:
-#     # Create a mock object that represents an asynchronous context manager
-#     # mock_post = AsyncMock()
-#     # mock_post.return_value.__aenter__.return_value.status = 200
-#     # mock_post.return_value.__aenter__.return_value.json.return_value = {"message": "Success"}
-
-#     # # Use the patch() function to patch the aiohttp.ClientSession.post method
-#     # with patch("aiohttp.ClientSession.post", mock_post):
-#     #     site_id = "norwich-pear-tree"
-#     #     outages = await post_site_outages(site_id)
-#     #     assert outages == {"message": "Success"}
-
-#     returned_data = {"key": "value"}
-#     mock.return_value.__aenter__.return_value.json = CoroutineMock(
-#         side_effect=lambda: returned_data
-#     )
-
-#     app = web.Application()
-#     web_client = await aiohttp_client(app)
-
-#     response: ClientResponse = await web_client.get("/path")
-#     assert response.status == 200
-
-#     assert mock.called
-#     assert mock.call_count == 1
