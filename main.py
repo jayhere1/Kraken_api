@@ -1,28 +1,24 @@
 import asyncio
 import datetime
-import json
 import logging
-from pprint import pprint
-from typing import List
-from urllib.parse import urljoin
+import os
 
 import aiohttp
+import dotenv
 import pytz
-import yaml
 from dateutil import parser
 from fastapi import FastAPI
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.ERROR)
 
-with open("api-key.txt") as f:
-    passwd = f.readline()
+dotenv.load_dotenv()
 
 base_url = "https://api.krakenflex.systems/interview-tests-mock-api/v1"
 
 headers = {
     "accept": "application/json",
-    "x-api-key": f"{passwd}",
+    "x-api-key": f"{os.environ.get('api_key')}",
 }
 
 app = FastAPI()
@@ -119,10 +115,12 @@ async def post_site_outages(site_id: str):
             outages = await response.json()
         if response.status != 200:
             raise Exception(f"status_code={response.status}, detail={response.text}")
+        else:
+            print("Successfully posted")
     return filtered_outages
 
 
-# print(asyncio.run(get_outages()))
-# print(asyncio.run(get_site_info("norwich-pear-tree")))
 if __name__ == "__main__":
+    print(asyncio.run(get_outages()))
+    print(asyncio.run(get_site_info("norwich-pear-tree")))
     asyncio.run(post_site_outages("norwich-pear-tree"))
