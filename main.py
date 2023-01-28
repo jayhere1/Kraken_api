@@ -23,6 +23,7 @@ headers = {
 
 app = FastAPI()
 
+
 @app.get("/outages")
 async def get_outages(max_retries=5, timeout=60):
     delay = 1
@@ -39,7 +40,7 @@ async def get_outages(max_retries=5, timeout=60):
                     elif response.status == 500:
                         raise Exception("Server Error")
                     else:
-                        raise Exception(f"status_code={response.status}, detail={response.text}")
+                        raise Exception(f"status_code={response.status}")
             except Exception as e:
                 log.error(e)
                 retries += 1
@@ -48,6 +49,7 @@ async def get_outages(max_retries=5, timeout=60):
                     delay = min(delay * 2, timeout)
                 else:
                     raise Exception("Maximum retries exceeded")
+
 
 @app.get("/site/{site_id}")
 async def get_site_info(
@@ -62,7 +64,9 @@ async def get_site_info(
             async with aiohttp.ClientSession() as session:
                 try:
                     async with session.get(
-                        f"{base_url}/site-info/{site_id}", headers=headers, ssl=False
+                        f"{base_url}/site-info/{site_id}",
+                        headers=headers,
+                        ssl=False,
                     ) as response:
                         if response.status == 200:
                             outages = await response.json()
@@ -70,9 +74,7 @@ async def get_site_info(
                         elif response.status == 500:
                             raise Exception("Server Error")
                         else:
-                            raise Exception(
-                                f"status_code={response.status}, detail={response.text}"
-                            )
+                            raise Exception(f"status_code={response.status}")
                 except Exception as e:
                     log.error(e)
                     retries += 1
@@ -83,6 +85,7 @@ async def get_site_info(
                         raise Exception("Maximum retries exceeded")
     else:
         return "Site not found"
+
 
 @app.post("/site/{site_id}/outages")
 async def post_site_outages(site_id: str):
@@ -96,12 +99,15 @@ async def post_site_outages(site_id: str):
         outage
         for outage in outages
         if (
-            parser.parse(outage["begin"]) >= pytz.UTC.localize(datetime.datetime(2022, 1, 1, 0, 0))
+            parser.parse(outage["begin"])
+            >= pytz.UTC.localize(datetime.datetime(2022, 1, 1, 0, 0))
             and outage["id"] in device_ids
         )
     ]
     for outage in filtered_outages:
-        device = next(device for device in devices if device["id"] == outage["id"])
+        device = next(
+            device for device in devices if device["id"] == outage["id"]
+        )
         outage["name"] = device["name"]
 
     async with aiohttp.ClientSession() as session:
@@ -114,7 +120,9 @@ async def post_site_outages(site_id: str):
             response.raise_for_status()
             outages = await response.json()
         if response.status != 200:
-            raise Exception(f"status_code={response.status}, detail={response.text}")
+            raise Exception(
+                f"status_code={response.status}, detail={response.text}"
+            )
         else:
             print("Successfully posted")
     return filtered_outages

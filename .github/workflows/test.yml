@@ -17,6 +17,6 @@ jobs:
     - name: Install dependencies
       run: poetry install
     - name: Lint with Flake8
-      run: poetry run flake8 my_package
+      run: poetry run flake8 main.py
     - name: Run tests with coverage
       run: poetry run pytest --cov=main --cov-fail-under=80
