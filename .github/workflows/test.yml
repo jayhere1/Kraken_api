@@ -19,4 +19,4 @@ jobs:
     - name: Lint with Flake8
       run: poetry run flake8 main.py
     - name: Run tests with coverage
-      run: poetry run pytest --cov=main --cov-fail-under=80 --env-api-key=$API_KEY
+      run: poetry run pytest --cov=main --cov-fail-under=80
