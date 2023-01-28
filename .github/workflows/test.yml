@@ -16,5 +16,7 @@ jobs:
         curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
     - name: Install dependencies
       run: poetry install
+    - name: Lint with Flake8
+      run: poetry run flake8 my_package
     - name: Run tests with coverage
-      run: poetry run pytest --cov=my_package --cov-fail-under=80
+      run: poetry run pytest --cov=main --cov-fail-under=80
