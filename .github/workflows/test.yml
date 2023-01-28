@@ -22,5 +22,4 @@ jobs:
       env:
         api_key: ${{ secrets.API_KEY }}
       run: 
-        echo api_key
         poetry run pytest --cov=main --cov-fail-under=80
